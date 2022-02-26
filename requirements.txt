@@ -1,0 +1,12 @@
+
+Django==4.0.2
+djangorestframework==3.13.1
+djangorestframework-jsonapi==5.0.0
+mysqlclient==2.1.0
+drf-yasg==1.20.0
+
+-r requirements/requirements-optionals.txt
+-r requirements/requirements-testing.txt
+-r requirements/requirements-documentation.txt
+-r requirements/requirements-codestyle.txt
+-r requirements/requirements-packaging.txt
