@@ -1,4 +1,5 @@
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 from ..dao.LenderRepository import LenderRepository
 from ..models import Lender
@@ -16,21 +17,25 @@ class MyPageNumberPagination(PageNumberPagination):
 class LenderService():
 
 
-    def list(self,request):
+    def fetch(self, request):
         lenderRepository = LenderRepository()
+        if request.query_params.get('id') != None:
+            id = request.query_params.get('id')
+            item = lenderRepository.find_one({"id":id},exclude_kw={},order_bys=None)
+            return Response(LenderSerializer(item).data)
+        else:
+            qs = lenderRepository.list_all()
+            active = request.query_params.get('active')
+            if active is not None:
+                print("has active" , active)
+                qs = qs.filter(active=active)
 
-        qs = lenderRepository.list_all()
-        active = request.query_params.get('active')
-        if active is not None:
-            print("has active" , active)
-            qs = qs.filter(active=active)
+            pg = MyPageNumberPagination()
 
-        pg = MyPageNumberPagination()
+            page_lenders = pg.paginate_queryset(queryset=qs, request=request)
+            ser = PagerSerialiser(instance=page_lenders, many=True)
 
-        page_lenders = pg.paginate_queryset(queryset=qs, request=request)
-        ser = PagerSerialiser(instance=page_lenders, many=True)
-
-        return pg.get_paginated_response(ser.data)
+            return pg.get_paginated_response(ser.data)
 
     def save(self,data):
         data = LenderSerializer(data=data)

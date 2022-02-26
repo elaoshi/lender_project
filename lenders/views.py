@@ -12,7 +12,6 @@ from lenders.serializers import LenderSerializer
 class LenderView(generics.ListAPIView):
     queryset = Lender.objects.all()
     serializer_class = LenderSerializer
-    filter_backends = (DjangoFilterBackend,)
     filter_fields = ('category', 'in_stock')
 
 

@@ -47,7 +47,7 @@ class LenderView(APIView):
     def get(self,requeest,*args,**kwargs):
 
         lenderService = LenderService()
-        response = lenderService.list(requeest)
+        response = lenderService.fetch(requeest)
         return response
 
     polygon_view_get_desc = 'Create a lender'
