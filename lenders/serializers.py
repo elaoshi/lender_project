@@ -11,10 +11,6 @@ class LenderSerializer(serializers.ModelSerializer):
             'upfront_commistion_rate','trait_commistion_rate',
             'active'
         ]
-#
-# class PaginatedLenderSerializer(PaginationSerializer):
-#     class Meta:
-#         object_serializer_class = LenderSerializer
 
 
 class PagerSerialiser(serializers.ModelSerializer):
