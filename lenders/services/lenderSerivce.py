@@ -18,8 +18,13 @@ class LenderService():
 
     def list(self,request):
         lenderRepository = LenderRepository()
+
         qs = lenderRepository.list_all()
-        # items = LenderSerializer(qs,many=True)
+        active = request.query_params.get('active')
+        if active is not None:
+            print("has active" , active)
+            qs = qs.filter(active=active)
+
         pg = MyPageNumberPagination()
 
         page_lenders = pg.paginate_queryset(queryset=qs, request=request)
