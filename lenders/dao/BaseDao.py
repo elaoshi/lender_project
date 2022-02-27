@@ -95,7 +95,6 @@ class BaseDAO:
 
     def find_one(self, filter_kw: dict = {}, exclude_kw: dict = {}, order_bys: list = None):
         """
-
         :param query_kwargs:
         :rtype: BaseModel | None
         :return:

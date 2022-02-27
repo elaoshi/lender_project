@@ -19,7 +19,7 @@ class LenderView(APIView):
         :rtype: BaseModel | None
         :return:
 
-        """
+    """
     polygon_view_get_desc = 'List lender with filter'
 
 
@@ -59,25 +59,9 @@ class LenderView(APIView):
         response = lenderService.fetch(request)
         return response
 
-    polygon_view_get_desc = 'Get lender with id'
-    @swagger_auto_schema(
-        operation_description=polygon_view_get_desc,
-        manual_parameters=[
-            openapi.Parameter(
-                name='id',
-                in_=openapi.IN_PATH,
-                description='lender id',
-                type=openapi.TYPE_INTEGER
-            )
-        ]
-    )
-    @action(detail=True)
-    def retrieve(self, request, id=None):
-        lenderService = LenderService()
-        if id != None:
-            response = lenderService.show(id)
-        return response
-
+    """
+    create lender
+    """
     polygon_view_get_desc = 'Create a lender'
     @swagger_auto_schema(operation_description=polygon_view_get_desc,
                          request_body=LenderSerializer)
@@ -87,19 +71,3 @@ class LenderView(APIView):
         return Response(res,status=HTTP_201_CREATED)
 
 
-    @swagger_auto_schema(
-        operation_description=polygon_view_get_desc,
-        manual_parameters=[
-            openapi.Parameter(
-                name='id',
-                in_=openapi.IN_PATH,
-                description='lender id',
-                type=openapi.TYPE_INTEGER
-            ),
-        ]
-    )
-    def show(self,request,id=None):
-
-        lenderService = LenderService()
-        response = lenderService.fetch(id)
-        return response
