@@ -6,3 +6,4 @@ pytest-cov==3.0.0
 pytest-django==4.5.2
 pytest-factoryboy==2.1.0
 syrupy==1.7.4
+pytest-bdd==5.0.0

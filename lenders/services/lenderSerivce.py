@@ -1,6 +1,5 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
-from rest_framework.status import HTTP_204_NO_CONTENT
 
 from ..dao.LenderRepository import LenderRepository
 from ..serializers import LenderSerializer, PagerSerialiser
@@ -15,6 +14,9 @@ class MyPageNumberPagination(PageNumberPagination):
     page_query_param = "page"
 
 class LenderService():
+    """
+    business service layer ( user story )
+    """
     def fetch(self, request):
         lenderRepository = LenderRepository()
 
@@ -37,7 +39,7 @@ class LenderService():
         item = lenderRepository.find_one({"id":id})
         if item == None:
             return False
-        return Response(LenderSerializer(item).data)
+        return LenderSerializer(item).data
 
 
     def save(self,data):

@@ -38,7 +38,7 @@ class LenderDetailView(APIView):
         response = lenderService.show(id)
         if response == False:
             return Response(status=HTTP_204_NO_CONTENT)
-        return response
+        return Response(response,status=HTTP_200_OK)
 
 
     polygon_view_put_desc = 'update a lender'
