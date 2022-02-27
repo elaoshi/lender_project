@@ -1,10 +1,15 @@
 
 from ..models import Lender
+from ..utils.dumps import qs_to_dataset, convert_to_dataframe, qs_to_local_csv
+
 
 class BaseDAO:
     # 子类必须覆盖这个
     MODEL_CLASS = Lender
     SAVE_BATCH_SIZE = 1000
+
+    def createByObj(self,dict):
+        return self.MODEL_CLASS(**dict)
 
     def save(self, obj):
         """insert one
@@ -105,19 +110,20 @@ class BaseDAO:
 
         return qs.first()
 
-    def find_queryset(self, filter_kw: dict, exclude_kw: dict, order_bys: list):
+    def find_queryset(self, filter_kw: dict, exclude_kw: dict={}, order_bys: list=None):
         """
-
         :param filter_kw:
         :return:
         """
-
-        return self.MODEL_CLASS.objects.filter(**filter_kw).exclude(**exclude_kw)
+        qs = self.MODEL_CLASS.objects.filter(**filter_kw).exclude(**exclude_kw)
+        if order_bys:
+            qs = qs.order_by(*order_bys)
+        return qs
 
     def find_all_model_objs(self, filter_kw: dict, exclude_kw: dict, order_bys: list) -> list:
         return self.find_queryset(filter_kw, exclude_kw, order_bys).all()
 
-    def is_exists(self, filter_kw:dict, exclude_kw:dict) -> bool:
+    def is_exists(self, filter_kw:dict, exclude_kw:dict={}) -> bool:
         return self.MODEL_CLASS.objects.filter(**filter_kw).exclude(**exclude_kw).exists()
 
     def get_count(self, filter_kw:dict, exclude_kw:dict) -> int:
@@ -125,3 +131,13 @@ class BaseDAO:
 
     def list_all(self):
         return self.MODEL_CLASS.objects.all()
+
+    def dump(self,output="csv"):
+        qs = self.list_all()
+        if output=='csv':
+            return qs_to_local_csv(qs)
+
+        else:
+            ds =  qs_to_dataset(qs)
+            return ds
+

@@ -141,3 +141,50 @@ def test_lender_delete(create_lender):
     item = lenderRepository.find_one({"id": id})
     assert item == None
 
+
+@pytest.mark.django_db
+def test_lender_dump(create_lender):
+    name = 'test'
+    create_lender(name=name)
+    name = 'test2'
+    create_lender(name=name)
+
+    lenderRepository = LenderRepository()
+    items = lenderRepository.dump()
+    print(items)
+    # assert len(items) == 2
+
+
+@pytest.mark.django_db
+def test_lender_create_from_json(create_lender):
+    faker = Factory.create()
+    code = faker.bothify(text='???')
+    name = faker.name()
+    data = {
+        "name":name,
+        "code":code,
+        "upfront_commistion_rate":"0.2",
+        "trait_commistion_rate":"0.1",
+        "active":True
+    }
+    code = faker.bothify(text='???')
+    name = faker.name()
+    data2 = {
+        "name": name,
+        "code": code,
+        "upfront_commistion_rate": "0.2",
+        "trait_commistion_rate": "0.1",
+        "active": True
+    }
+
+    lenderRepository = LenderRepository()
+
+    objs = [
+        lenderRepository.createByObj(data),
+
+        lenderRepository.createByObj(data2),
+    ]
+
+    lenderRepository.save_batch(objs)
+    qs = lenderRepository.list_all()
+    assert qs.count() == 2

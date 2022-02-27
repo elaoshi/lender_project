@@ -70,4 +70,16 @@ class LenderView(APIView):
         res = lenderService.save(request.data)
         return Response(res,status=HTTP_201_CREATED)
 
+    """
+        create lender csv dumpfile
+    """
+    polygon_view_get_desc = 'Dump a lender CSV'
+
+    @swagger_auto_schema(operation_description=polygon_view_get_desc)
+    @action(methods=['post'],detail=False)
+    def dumps(self, request, *args, **kwargs):
+        lenderService = LenderService()
+        file_path = lenderService.dumps(output="csv")
+        return Response({"file_path":file_path}, status=HTTP_201_CREATED)
+
 

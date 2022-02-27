@@ -1,5 +1,7 @@
+import csv
+import io
+
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
 
 from ..dao.LenderRepository import LenderRepository
 from ..serializers import LenderSerializer, PagerSerialiser
@@ -72,3 +74,23 @@ class LenderService():
             return False
         item.delete()
         return True
+
+    def dumps(self,output="csv"):
+        lenderRepository = LenderRepository()
+        return lenderRepository.dump(output=output)
+
+
+    def bulk_upload(self,request):
+
+        lenderRepository = LenderRepository()
+
+        file = request.FILES['file'].file
+        paramFile = io.TextIOWrapper(file)
+        portfolio1 = csv.DictReader(paramFile)
+        list_of_dict = list(portfolio1)
+        objs = [
+            lenderRepository.createByObj(row)
+            for row in list_of_dict
+        ]
+
+        return lenderRepository.save_batch(objs)

@@ -1,0 +1,4 @@
+name,code,active,trait_commistion_rate,upfront_commistion_rate
+bdd,ggd,True,0.30,0.10
+ab,fdd,True,0.44,0.21
+33f,Abc,False,0.01,0.12
