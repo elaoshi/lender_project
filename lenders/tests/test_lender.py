@@ -3,7 +3,7 @@ import json
 import requests_mock
 from rest_framework.reverse import reverse
 from rest_framework.test import APIRequestFactory
-
+import pandas as pd
 
 from lenders.dao.LenderRepository import  LenderRepository
 from lenders.models import Lender
@@ -184,6 +184,7 @@ def test_lender_create_from_json(create_lender):
 
         lenderRepository.createByObj(data2),
     ]
+
 
     lenderRepository.save_batch(objs)
     qs = lenderRepository.list_all()
