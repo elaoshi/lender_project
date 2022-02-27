@@ -17,3 +17,4 @@ class PagerSerialiser(serializers.ModelSerializer):
   class Meta:
     model = Lender
     fields = "__all__"
+    ordering = ['-id']

@@ -21,7 +21,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from lenders.views import LenderView
+from lenders.views import LenderView, LenderDetailView
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -33,9 +33,12 @@ schema_view = get_schema_view(
    permission_classes=(permissions.AllowAny,),
 )
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('lender',LenderView.as_view()),
+    path('lender',LenderView.as_view(), name='lender-list'),
+    path('lender/<int:id>', LenderDetailView.as_view(), name='lender-detail'),
     re_path(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

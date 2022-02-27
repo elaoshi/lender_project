@@ -51,16 +51,14 @@ class BaseDAO:
         return True
 
     def delete_batch_by_query(self, filter_kw: dict, exclude_kw: dict):
-        """批量删除
-
+        """
         """
         self.MODEL_CLASS.objects.filter(**filter_kw).exclude(**exclude_kw).delete()
 
         return True
 
-    def delete_by_fake(self, obj):
-        """假删除/伪删除
-
+    def soft_delete(self, obj):
+        """ soft delete
         """
         if obj is None:
             return False
@@ -88,11 +86,14 @@ class BaseDAO:
 
         return True
 
-    def update_batch_by_query(self, query_kwargs: dict, exclude_kw: dict, newattrs_kwargs: dict):
+    def update_batch_by_query(self, query_kwargs: dict={}, exclude_kw: dict={}, newattrs_kwargs: dict={}):
 
         self.MODEL_CLASS.objects.filter(**query_kwargs).exclude(**exclude_kw).update(**newattrs_kwargs)
 
-    def find_one(self, filter_kw: dict, exclude_kw: dict, order_bys: list):
+    def get_and_update(self,id,newattrs_kwargs:dict={}):
+        self.MODEL_CLASS.objects.filter(id=id).update(**newattrs_kwargs)
+
+    def find_one(self, filter_kw: dict = {}, exclude_kw: dict = {}, order_bys: list = None):
         """
 
         :param query_kwargs:
