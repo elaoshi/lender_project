@@ -1,5 +1,6 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from rest_framework.status import HTTP_204_NO_CONTENT
 
 from ..dao.LenderRepository import LenderRepository
 from ..serializers import LenderSerializer, PagerSerialiser
@@ -34,6 +35,8 @@ class LenderService():
 
         lenderRepository = LenderRepository()
         item = lenderRepository.find_one({"id":id})
+        if item == None:
+            return False
         return Response(LenderSerializer(item).data)
 
 
@@ -49,7 +52,21 @@ class LenderService():
     def update(self,id,data):
 
         lenderRepository = LenderRepository()
+
+        item = lenderRepository.find_one({"id": id})
+        if item == None:
+            return False
+
         item = lenderRepository.update_batch_by_query({"id":id},newattrs_kwargs=data)
 
         return item
 
+
+    def delete(self,id):
+
+        lenderRepository = LenderRepository()
+        item = lenderRepository.find_one({"id": id})
+        if item == None:
+            return False
+        item.delete()
+        return True

@@ -123,3 +123,21 @@ def test_lender_update(create_lender):
 
     item = Lender.objects.get(id=lender.id)
     assert item.name == 'ttt'
+
+
+@pytest.mark.django_db
+def test_lender_delete(create_lender):
+
+    name = 'test'
+    lender = create_lender(name=name)
+
+    id = lender.id
+    lenderService = LenderService()
+    res = lenderService.delete(lender.id)
+    assert res == True
+
+
+    lenderRepository = LenderRepository()
+    item = lenderRepository.find_one({"id": id})
+    assert item == None
+

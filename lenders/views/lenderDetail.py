@@ -5,7 +5,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK
+from rest_framework.status import HTTP_201_CREATED, HTTP_200_OK, HTTP_204_NO_CONTENT
 from rest_framework.views import APIView
 
 from ..serializers import LenderSerializer
@@ -36,6 +36,8 @@ class LenderDetailView(APIView):
         lenderService = LenderService()
         print('id is ',id)
         response = lenderService.show(id)
+        if response == False:
+            return Response(status=HTTP_204_NO_CONTENT)
         return response
 
 
@@ -46,4 +48,17 @@ class LenderDetailView(APIView):
     def put(self, request, id):
         lenderService = LenderService()
         res = lenderService.update(id,request.data)
+        if res == False:
+            return Response(status=HTTP_204_NO_CONTENT)
         return Response(res, status=HTTP_200_OK)
+
+
+    polygon_view_del_desc = 'delete a lender'
+    @swagger_auto_schema(operation_description=polygon_view_del_desc)
+    @action(methods=['delete'], detail=True)
+    def delete(self, request, id):
+        lenderService = LenderService()
+        if lenderService.delete(id):
+            return Response(status=HTTP_200_OK)
+        else:
+            return Response(status=HTTP_204_NO_CONTENT)
