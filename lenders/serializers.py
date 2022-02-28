@@ -1,6 +1,4 @@
 from rest_framework import serializers
-from rest_framework.fields import DecimalField
-
 from lenders.models import Lender
 
 
