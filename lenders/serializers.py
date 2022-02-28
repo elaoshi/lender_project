@@ -13,9 +13,14 @@ class LenderSerializer(serializers.ModelSerializer):
         fields = [
             'name', 'code',
             'upfront_commistion_rate', 'trait_commistion_rate',
-            'active'
+            'active', 'id'
         ]
 
+
+    def create(self, validated_data):
+        validated_data['code'] = validated_data['code'].capitalize()
+        lender = Lender.objects.create(**validated_data)
+        return lender
 
 class PagerSerialiser(serializers.ModelSerializer):
 

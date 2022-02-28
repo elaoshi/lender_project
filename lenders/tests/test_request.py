@@ -10,14 +10,14 @@ from lenders.models import Lender
 
 
 class AccountTests(APITestCase):
-    def test_create_lender(self):
+    def test_create_lender_post(self):
         """
         Ensure we can create a new object.
         """
         url = '/lender'
         data = {
             "name": "33f",
-            "code": "Abc",
+            "code": "abc",
             "upfront_commistion_rate": 0.12,
             "trait_commistion_rate": 0.01,
             "active": False
@@ -26,9 +26,27 @@ class AccountTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['name'], data['name'])
+        self.assertEqual(response.data['code'], "Abc")
         self.assertEqual(float(response.data['upfront_commistion_rate']), data['upfront_commistion_rate'])
         self.assertEqual(Lender.objects.count(), 1)
         self.assertEqual(Lender.objects.get().name, data['name'])
+
+    def test_create_lender_post_should_failed(self):
+        """
+        Ensure we can not create a new object with long code.
+        """
+        url = '/lender'
+        data = {
+            "name": "33f",
+            "code": "adsfasfs",
+            "upfront_commistion_rate": 0.12,
+            "trait_commistion_rate": 0.01,
+            "active": False
+        }
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
 
     @patch("pandas.read_csv")
     def test_upload_lender(self, mock_read_csv):

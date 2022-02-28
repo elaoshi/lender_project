@@ -2,7 +2,7 @@ from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED
+from rest_framework.status import HTTP_201_CREATED, HTTP_406_NOT_ACCEPTABLE
 from rest_framework.views import APIView
 
 from ..serializers import LenderSerializer
@@ -58,7 +58,10 @@ class LenderView(APIView):
            Create lender
         """
         lender_repository: LenderService = LenderService()
+
         res = lender_repository.save(request.data)
+        if res is False:
+            return Response(status=HTTP_406_NOT_ACCEPTABLE)
         return Response(res, status=HTTP_201_CREATED)
 
     """

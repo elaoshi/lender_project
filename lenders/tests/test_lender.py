@@ -1,3 +1,4 @@
+from django.db import DataError
 from rest_framework.reverse import reverse
 
 from lenders.dao.LenderRepository import LenderRepository
@@ -29,18 +30,23 @@ def test_create_lender_with_code():
 @pytest.fixture
 def create_lender(db, django_user_model):
     faker = Factory.create()
-    code = faker.bothify(text='???')
 
     def make_user(**kwargs):
         if 'name' in kwargs:
             name = kwargs['name']
         else:
             name = faker.name()
+            kwargs["name"] = name
 
         if 'active' in kwargs:
             active = kwargs['active']
         else:
             active = True
+
+        if 'code' in kwargs:
+            code = kwargs['code']
+        else:
+            code = faker.bothify(text='???')
 
         return Lender.objects.create(
             name=name,
@@ -54,13 +60,24 @@ def create_lender(db, django_user_model):
 
 @pytest.mark.django_db
 def test_created_user(create_lender):
-    lender = create_lender(name="test")
-    print(lender.name)
+    code = "Bbb"
+    lender = create_lender(name="test",code=code)
+
     assert len(lender.code) == 3
+    assert lender.code == code
+
 
 
 @pytest.mark.django_db
-def test_list_all_lender(create_lender):
+def test_created_user_failed(create_lender):
+    with pytest.raises( DataError):
+        code = "Bbbbb"
+        create_lender(name="test",code=code)
+
+
+
+@pytest.mark.django_db
+def test_list_all_lender_count(create_lender):
     create_lender()
     lender_dao = LenderRepository()
     qs = lender_dao.list_all()
@@ -311,3 +328,5 @@ def test_lender_dump_all(create_lender):
     response = LenderDumpView.as_view()(_request)
 
     assert response.status_code == HTTP_201_CREATED
+
+
