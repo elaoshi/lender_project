@@ -1,14 +1,9 @@
-import json
-
-import requests_mock
 from rest_framework.reverse import reverse
-from rest_framework.test import APIRequestFactory
-import pandas as pd
 
-from lenders.dao.LenderRepository import  LenderRepository
+from lenders.dao.LenderRepository import LenderRepository
 from lenders.models import Lender
 import pytest
-from faker import Faker,Factory
+from faker import Factory
 
 from django.test.client import RequestFactory
 from lenders.services.lenderSerivce import LenderService
@@ -16,18 +11,18 @@ from lenders.views import LenderView, LenderDetailView
 
 
 def test_example():
+    assert 1 == 1
 
-    assert 1==1
 
 @pytest.mark.django_db
 def test_create_lender_with_code():
     faker = Factory.create()
     name = faker.name()
     code = faker.bothify(text='???')
-    lender = Lender.objects.create(name=name,code=code,upfront_commistion_rate=0.2,
+    lender = Lender.objects.create(name=name, code=code, upfront_commistion_rate=0.2,
                                    trait_commistion_rate=0.1,
                                    active=True)
-    assert len(lender.code)  == 3
+    assert len(lender.code) == 3
 
 
 @pytest.fixture
@@ -36,7 +31,7 @@ def create_lender(db, django_user_model):
     code = faker.bothify(text='???')
 
     def make_user(**kwargs):
-        if 'name'  in kwargs:
+        if 'name' in kwargs:
             name = kwargs['name']
         else:
             name = faker.name()
@@ -58,38 +53,38 @@ def test_created_user(create_lender):
     assert len(lender.code) == 3
 
 
-
 @pytest.mark.django_db
 def test_list_all_lender(create_lender):
     create_lender()
-    lenderDao = LenderRepository()
-    qs = lenderDao.list_all()
+    lender_dao = LenderRepository()
+    qs = lender_dao.list_all()
     print(qs)
     assert qs.count() == 1
 
 
-## ------
 test_data = [
-    ('test','test',True),
-    ('test2','test2',True)
+    ('test', 'test', True),
+    ('test2', 'test2', True)
 ]
+
+
 @pytest.mark.django_db
-@pytest.mark.parametrize("a,b,expected",test_data)
-def test_list_all_lender(create_lender,a,b,expected):
+@pytest.mark.parametrize("a,b,expected", test_data)
+def test_list_all_lender(create_lender, a, b, expected):
     lender = create_lender(name=a)
     assert lender.name == a and lender.name == b
-    lenderRepository = LenderRepository()
+    lender_repository = LenderRepository()
 
-    id = lender.id
-    qs = lenderRepository.find_one({"id":id})
+    _id = lender.id
+    qs = lender_repository.find_one({"id": _id})
     assert lender.id == qs.id
-    assert  (lender.name == qs.name and expected)
+    assert (lender.name == qs.name and expected)
 
 
 @pytest.mark.django_db
 def test_lender_serveice_fetch(create_lender):
     name = 'test'
-    lender = create_lender(name=name)
+    create_lender(name=name)
     rf = RequestFactory()
     get_request = rf.get('/lender/')
     response = LenderView.as_view()(get_request)
@@ -105,8 +100,8 @@ def test_lender_serveice_filter(create_lender):
     lender = create_lender(name=name)
     rf = RequestFactory()
     kwargs = {"id": lender.id}
-    get_request = rf.get(reverse('lender-detail',kwargs=kwargs))
-    response = LenderDetailView.as_view()(get_request,**kwargs)
+    get_request = rf.get(reverse('lender-detail', kwargs=kwargs))
+    response = LenderDetailView.as_view()(get_request, **kwargs)
 
     assert response.status_code == 200
     assert response.data['name'] == name
@@ -116,8 +111,8 @@ def test_lender_serveice_filter(create_lender):
 def test_lender_update(create_lender):
     name = 'test'
     lender = create_lender(name=name)
-    lenderService = LenderService()
-    lenderService.update(lender.id, data={"name":"ttt"})
+    lender_service = LenderService()
+    lender_service.update(lender.id, data={"name": "ttt"})
 
     item = Lender.objects.get(id=lender.id)
     assert item.name == 'ttt'
@@ -125,19 +120,17 @@ def test_lender_update(create_lender):
 
 @pytest.mark.django_db
 def test_lender_delete(create_lender):
-
     name = 'test'
     lender = create_lender(name=name)
 
-    id = lender.id
-    lenderService = LenderService()
-    res = lenderService.delete(lender.id)
-    assert res == True
+    _id = lender.id
+    lender_service = LenderService()
+    res = lender_service.delete(lender.id)
+    assert res is True
 
-
-    lenderRepository = LenderRepository()
-    item = lenderRepository.find_one({"id": id})
-    assert item == None
+    lender_repository = LenderRepository()
+    item = lender_repository.find_one({"id": _id})
+    assert item is None
 
 
 @pytest.mark.django_db
@@ -147,24 +140,24 @@ def test_lender_dump(create_lender):
     name = 'test2'
     create_lender(name=name)
 
-    lenderRepository = LenderRepository()
-    items = lenderRepository.dump()
+    lender_repository = LenderRepository()
+    items = lender_repository.dump()
     assert len(items) > 0
-    filename = lenderRepository.dump(output='csv')
+    filename = lender_repository.dump()
     assert len(filename) > 0
 
 
 @pytest.mark.django_db
-def test_lender_create_from_json(create_lender):
+def test_lender_create_from_json():
     faker = Factory.create()
     code = faker.bothify(text='???')
     name = faker.name()
     data = {
-        "name":name,
-        "code":code,
-        "upfront_commistion_rate":"0.2",
-        "trait_commistion_rate":"0.1",
-        "active":True
+        "name": name,
+        "code": code,
+        "upfront_commistion_rate": "0.2",
+        "trait_commistion_rate": "0.1",
+        "active": True
     }
     code = faker.bothify(text='???')
     name = faker.name()
@@ -176,15 +169,14 @@ def test_lender_create_from_json(create_lender):
         "active": True
     }
 
-    lenderRepository = LenderRepository()
+    lender_repository = LenderRepository()
 
     objs = [
-        lenderRepository.createByObj(data),
+        lender_repository.createByObj(data),
 
-        lenderRepository.createByObj(data2),
+        lender_repository.createByObj(data2),
     ]
 
-
-    lenderRepository.save_batch(objs)
-    qs = lenderRepository.list_all()
+    lender_repository.save_batch(objs)
+    qs = lender_repository.list_all()
     assert qs.count() == 2

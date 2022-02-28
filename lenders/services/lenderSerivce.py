@@ -1,24 +1,25 @@
 from rest_framework.pagination import PageNumberPagination
 from ..dao.LenderRepository import LenderRepository
 from ..serializers import LenderSerializer, PagerSerialiser
-from ..utils.csvHelper import parse_csv_to_list
+from ..utils.csvHelper import CsvHepler
 
 
 class MyPageNumberPagination(PageNumberPagination):
-
     page_size = 5
     page_size_query_param = "size"
     max_page_size = 10
     page_query_param = "page"
 
-class LenderService():
+
+class LenderService:
     """
     business service layer ( user story )
     """
-    def fetch(self, request):
-        lenderRepository = LenderRepository()
 
-        qs = lenderRepository.list_all()
+    def fetch(self, request):
+        lender_repository = LenderRepository()
+
+        qs = lender_repository.list_all()
         active = request.query_params.get('active')
         if active is not None and active == 1:
             qs = qs.filter(active=active)
@@ -30,17 +31,15 @@ class LenderService():
 
         return pg.get_paginated_response(ser.data)
 
+    def show(self, id):
 
-    def show(self,id):
-
-        lenderRepository = LenderRepository()
-        item = lenderRepository.find_one({"id":id})
-        if item == None:
+        lender_repository = LenderRepository()
+        item = lender_repository.find_one({"id": id})
+        if item is None:
             return False
         return LenderSerializer(item).data
 
-
-    def save(self,data):
+    def save(self, data):
         data = LenderSerializer(data=data)
         if data.is_valid():
             data.save()
@@ -48,44 +47,41 @@ class LenderService():
 
         return False
 
+    def update(self, id, data):
 
-    def update(self,id,data):
+        lender_repository = LenderRepository()
 
-        lenderRepository = LenderRepository()
-
-        item = lenderRepository.find_one({"id": id})
-        if item == None:
+        item = lender_repository.find_one({"id": id})
+        if item is None:
             return False
 
-        item = lenderRepository.update_batch_by_query({"id":id},newattrs_kwargs=data)
+        item = lender_repository.update_batch_by_query({"id": id},exclude_kw={}, newattrs_kwargs=data)
 
         return item
 
+    def delete(self, id):
 
-    def delete(self,id):
-
-        lenderRepository = LenderRepository()
-        item = lenderRepository.find_one({"id": id})
-        if item == None:
+        lender_repository = LenderRepository()
+        item = lender_repository.find_one({"id": id})
+        if item is None:
             return False
         item.delete()
         return True
 
-    def dumps(self,output="csv"):
-        lenderRepository = LenderRepository()
-        return lenderRepository.dump(output=output)
+    def dumps(self):
+        lender_repository = LenderRepository()
+        return lender_repository.dump()
 
+    def bulk_upload(self, file):
 
-    def bulk_upload(self,request):
-
-        lenderRepository = LenderRepository()
-
-        data = parse_csv_to_list(request.FILES['file'].file)
+        lender_repository = LenderRepository()
+        csv_helper = CsvHepler()
+        data = csv_helper.parse_csv_to_list(file)
 
         list_of_dict = list(data)
 
         objs = [
-            lenderRepository.createByObj(row)
+            lender_repository.createByObj(row)
             for row in list_of_dict
         ]
-        return lenderRepository.save_batch(objs)
+        return lender_repository.save_batch(objs)

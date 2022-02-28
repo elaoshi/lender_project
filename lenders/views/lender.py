@@ -1,6 +1,3 @@
-from django.shortcuts import render
-
-# Create your views here.
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
@@ -15,13 +12,10 @@ from ..services.lenderSerivce import LenderService
 class LenderView(APIView):
     """
         Get resultes.
-        :param page:
         :rtype: BaseModel | None
         :return:
-
     """
     polygon_view_get_desc = 'List lender with filter'
-
 
     @swagger_auto_schema(
         operation_description=polygon_view_get_desc,
@@ -52,23 +46,26 @@ class LenderView(APIView):
             )
         ]
     )
-    def get(self,request):
+    def get(self, request):
+        """
+           Fetch lenders
+        """
+        lender_repository: LenderService = LenderService()
 
-        lenderService = LenderService()
-
-        response = lenderService.fetch(request)
+        response = lender_repository.fetch(request)
         return response
 
-    """
-    create lender
-    """
     polygon_view_get_desc = 'Create a lender'
+
     @swagger_auto_schema(operation_description=polygon_view_get_desc,
                          request_body=LenderSerializer)
-    def post(self,request,*args,**kwargs):
-        lenderService = LenderService()
-        res = lenderService.save(request.data)
-        return Response(res,status=HTTP_201_CREATED)
+    def post(self, request, *args, **kwargs):
+        """
+           Create lender
+        """
+        lender_repository: LenderService = LenderService()
+        res = lender_repository.save(request.data)
+        return Response(res, status=HTTP_201_CREATED)
 
     """
         create lender csv dumpfile
@@ -76,10 +73,11 @@ class LenderView(APIView):
     polygon_view_get_desc = 'Dump a lender CSV'
 
     @swagger_auto_schema(operation_description=polygon_view_get_desc)
-    @action(methods=['post'],detail=False)
+    @action(methods=['post'], detail=False)
     def dumps(self, request, *args, **kwargs):
-        lenderService = LenderService()
-        file_path = lenderService.dumps(output="csv")
-        return Response({"file_path":file_path}, status=HTTP_201_CREATED)
-
-
+        """
+           Export lender to csv
+        """
+        lender_repository: LenderService = LenderService()
+        file_path = lender_repository.dumps()
+        return Response({"file_path": file_path}, status=HTTP_201_CREATED)

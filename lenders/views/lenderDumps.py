@@ -9,9 +9,9 @@ from lenders.services.lenderSerivce import LenderService
 class LenderDumpView(generics.GenericAPIView):
 
 
-    polygon_view_dump_desc = 'update a lender'
+    polygon_view_dump_desc = 'update a lender from csv file'
     @swagger_auto_schema(operation_description=polygon_view_dump_desc,)
     def post(self, request, *args, **kwargs):
-        lenderService = LenderService()
-        file_path = lenderService.dumps(output="csv")
+        lender_service = LenderService()
+        file_path = lender_service.dumps()
         return Response({"file_path":file_path}, status=HTTP_201_CREATED)

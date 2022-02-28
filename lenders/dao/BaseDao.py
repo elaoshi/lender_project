@@ -1,14 +1,11 @@
-
 from ..models import Lender
-from ..utils.csvHelper import qs_to_dataset, convert_to_dataframe, qs_to_local_csv
 
 
 class BaseDAO:
-
     MODEL_CLASS = Lender
     SAVE_BATCH_SIZE = 1000
 
-    def createByObj(self,dict):
+    def createByObj(self, dict):
         return self.MODEL_CLASS(**dict)
 
     def save(self, obj):
@@ -27,6 +24,7 @@ class BaseDAO:
     def save_batch(self, objs, *, batch_size=SAVE_BATCH_SIZE):
         """insert batch
 
+        :param batch_size: ex. 1000
         :type objs: list[BaseModel]
         :param objs:
         :return:
@@ -63,7 +61,8 @@ class BaseDAO:
         return True
 
     def soft_delete(self, obj):
-        """ soft delete
+        """
+            Soft delete
         """
         if obj is None:
             return False
@@ -91,25 +90,26 @@ class BaseDAO:
 
         return True
 
-    def update_batch_by_query(self, query_kwargs: dict={}, exclude_kw: dict={}, newattrs_kwargs: dict={}):
+    def update_batch_by_query(self, query_kwargs: dict, exclude_kw: dict, newattrs_kwargs: dict):
         self.MODEL_CLASS.objects.filter(**query_kwargs).exclude(**exclude_kw).update(**newattrs_kwargs)
 
-    def get_and_update(self,id,newattrs_kwargs:dict={}):
+    def get_and_update(self, id, newattrs_kwargs: dict):
         self.MODEL_CLASS.objects.filter(id=id).update(**newattrs_kwargs)
 
-    def find_one(self, filter_kw: dict = {}, exclude_kw: dict = {}, order_bys: list = None):
+    def find_one(self, filter_kw: dict, order_bys: list = None):
         """
-        :param query_kwargs:
+        :param filter_kw: filter kw
+        :param order_bys: order by list
         :rtype: BaseModel | None
         :return:
         """
-        qs = self.MODEL_CLASS.objects.filter(**filter_kw).exclude(**exclude_kw)
+        qs = self.MODEL_CLASS.objects.filter(**filter_kw)
         if order_bys:
             qs = qs.order_by(*order_bys)
 
         return qs.first()
 
-    def find_queryset(self, filter_kw: dict, exclude_kw: dict={}, order_bys: list=None):
+    def __find_queryset(self, filter_kw: dict, exclude_kw: dict, order_bys: list = None):
         """
         :param filter_kw:
         :return:
@@ -119,23 +119,14 @@ class BaseDAO:
             qs = qs.order_by(*order_bys)
         return qs
 
-    def find_all_model_objs(self, filter_kw: dict, exclude_kw: dict, order_bys: list) -> list:
-        return self.find_queryset(filter_kw, exclude_kw, order_bys).all()
+    def find_all_model_objs(self, filter_kw: dict, exclude_kw: dict, order_bys: list = None) -> list:
+        return self.__find_queryset(filter_kw, exclude_kw, order_bys).all()
 
-    def is_exists(self, filter_kw:dict, exclude_kw:dict={}) -> bool:
+    def is_exists(self, filter_kw: dict, exclude_kw: dict = None) -> bool:
         return self.MODEL_CLASS.objects.filter(**filter_kw).exclude(**exclude_kw).exists()
 
-    def get_count(self, filter_kw:dict, exclude_kw:dict) -> int:
+    def get_count(self, filter_kw: dict, exclude_kw: dict = None) -> int:
         return self.MODEL_CLASS.objects.filter(**filter_kw).exclude(**exclude_kw).count()
 
     def list_all(self):
         return self.MODEL_CLASS.objects.all()
-
-    def dump(self,output="csv"):
-        qs = self.list_all()
-        if output=='csv':
-            return qs_to_local_csv(qs)
-        else:
-            ds =  qs_to_dataset(qs)
-            return ds
-
