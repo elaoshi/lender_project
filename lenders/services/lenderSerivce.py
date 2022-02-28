@@ -1,12 +1,6 @@
-import csv
-import io
-
 from rest_framework.pagination import PageNumberPagination
-
 from ..dao.LenderRepository import LenderRepository
 from ..serializers import LenderSerializer, PagerSerialiser
-
-
 from ..utils.csvHelper import parse_csv_to_list
 
 
