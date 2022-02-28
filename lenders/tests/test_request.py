@@ -10,7 +10,7 @@ from lenders.models import Lender
 
 
 class AccountTests(APITestCase):
-    def test_create_account(self):
+    def test_create_lender(self):
         """
         Ensure we can create a new object.
         """
@@ -57,6 +57,14 @@ class AccountTests(APITestCase):
         response = self.client.post(url, {"file": data}, format="multipart")
         mock_read_csv.return_value = True
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        print(response.status_code)
         data.close()
         os.remove(file_name)
+
+    def test_upload_lender_empty(self):
+        """
+        Ensure we can create a new object.
+        """
+
+        url = '/lender/upload'
+        response = self.client.post(url, {"file":"aa"}, format="multipart")
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)

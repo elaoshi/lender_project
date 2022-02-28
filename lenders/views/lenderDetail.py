@@ -31,7 +31,6 @@ class LenderDetailView(APIView):
     )
     def get(self, request, id):
         lender_service: LenderService = LenderService()
-        print('id is ', id)
         response = lender_service.show(id)
         if response is False:
             return Response(status=HTTP_204_NO_CONTENT)
@@ -45,6 +44,7 @@ class LenderDetailView(APIView):
     def put(self, request, id):
         lender_service = LenderService()
         res = lender_service.update(id, request.data)
+        print(request.data)
         if res is False:
             return Response(status=HTTP_204_NO_CONTENT)
         return Response(res, status=HTTP_200_OK)

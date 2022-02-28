@@ -23,6 +23,7 @@ class LenderUploadView(generics.CreateAPIView):
                          )
     @action(detail=False, methods=['post'])
     def post(self, request):
+        file = None
         if 'file' in request.FILES:
             file = request.FILES['file'].file
         else:
@@ -33,6 +34,6 @@ class LenderUploadView(generics.CreateAPIView):
             lender_service.bulk_upload(file)
         except Exception as e:
             print('Error While Importing Data: ', e)
-            return Response(status=HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(status=HTTP_406_NOT_ACCEPTABLE)
 
         return Response(status=HTTP_201_CREATED)

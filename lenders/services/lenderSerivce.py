@@ -21,7 +21,7 @@ class LenderService:
 
         qs = lender_repository.list_all()
         active = request.query_params.get('active')
-        if active is not None and active == 1:
+        if active is not None:
             qs = qs.filter(active=active)
 
         pg = MyPageNumberPagination()
