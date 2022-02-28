@@ -26,6 +26,7 @@ class AccountTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(response.data['name'], data['name'])
+        self.assertEqual(float(response.data['upfront_commistion_rate']), data['upfront_commistion_rate'])
         self.assertEqual(Lender.objects.count(), 1)
         self.assertEqual(Lender.objects.get().name, data['name'])
 
