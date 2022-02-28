@@ -1,4 +1,5 @@
 import csv
+import io
 import os
 
 import pandas as pd
@@ -90,7 +91,7 @@ def qs_to_local_csv(qs, fields=None, path=None, filename=None):
     if path is None:
         if not os.path.exists(MEDIA_DIR):
             '''
-            CSV storage folder doesn't exist, make it!
+            media folder doesn't exist, make it!
             '''
             os.mkdir(MEDIA_DIR)
         path = os.path.join(MEDIA_DIR, 'csvstorage')
@@ -118,3 +119,22 @@ def qs_to_local_csv(qs, fields=None, path=None, filename=None):
             writer.writerow(data_item)
             rows_done += 1
     return media_filepath
+
+def parse_csv_to_list(file):
+    """
+
+    :param file:
+    :return:
+    """
+    paramFile = io.TextIOWrapper(file)
+    data = csv.DictReader(paramFile)
+
+    items = drop_duplicate_row(data)
+
+    return items
+
+def drop_duplicate_row(data):
+
+    df = pd.DataFrame(data)
+    df = df.drop_duplicates()
+    return  df.T.to_dict().values()

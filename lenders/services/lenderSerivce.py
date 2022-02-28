@@ -5,7 +5,9 @@ from rest_framework.pagination import PageNumberPagination
 
 from ..dao.LenderRepository import LenderRepository
 from ..serializers import LenderSerializer, PagerSerialiser
-import pandas as pd
+
+
+from ..utils.csvHelper import parse_csv_to_list
 
 
 class MyPageNumberPagination(PageNumberPagination):
@@ -84,15 +86,9 @@ class LenderService():
 
         lenderRepository = LenderRepository()
 
-        file = request.FILES['file'].file
-        paramFile = io.TextIOWrapper(file)
-        portfolio1 = csv.DictReader(paramFile)
+        data = parse_csv_to_list(request.FILES['file'].file)
 
-        df = pd.DataFrame(portfolio1)
-        df = df.drop_duplicates()
-        portfolio1 = df.T.to_dict().values()
-        
-        list_of_dict = list(portfolio1)
+        list_of_dict = list(data)
 
         objs = [
             lenderRepository.createByObj(row)

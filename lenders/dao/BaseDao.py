@@ -1,10 +1,10 @@
 
 from ..models import Lender
-from ..utils.dumps import qs_to_dataset, convert_to_dataframe, qs_to_local_csv
+from ..utils.csvHelper import qs_to_dataset, convert_to_dataframe, qs_to_local_csv
 
 
 class BaseDAO:
-    # 子类必须覆盖这个
+
     MODEL_CLASS = Lender
     SAVE_BATCH_SIZE = 1000
 
@@ -92,7 +92,6 @@ class BaseDAO:
         return True
 
     def update_batch_by_query(self, query_kwargs: dict={}, exclude_kw: dict={}, newattrs_kwargs: dict={}):
-
         self.MODEL_CLASS.objects.filter(**query_kwargs).exclude(**exclude_kw).update(**newattrs_kwargs)
 
     def get_and_update(self,id,newattrs_kwargs:dict={}):
@@ -136,7 +135,6 @@ class BaseDAO:
         qs = self.list_all()
         if output=='csv':
             return qs_to_local_csv(qs)
-
         else:
             ds =  qs_to_dataset(qs)
             return ds
