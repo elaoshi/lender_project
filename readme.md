@@ -13,12 +13,8 @@ http://127.0.0.1:8000/redoc/
 
 # Test
 
-docker exec -it demo_db_1 bash
+docker exec -it demo_app_1 bash
 
-pytest
+pytest --cache-clear
 
-# APIs
-/lender
-/page=1&active=0
-/page=1&active=1
 
