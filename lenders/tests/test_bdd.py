@@ -5,7 +5,7 @@ from pytest_bdd import scenario, given, when, then
 from lenders.models import Lender
 
 
-@scenario('update_lender.feature', 'Update the lender')
+@scenario('./update_lender.feature', 'Update the lender')
 def test_update():
     pass
 

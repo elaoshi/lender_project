@@ -1,17 +1,19 @@
 # Run project
 
-docker-composer up
+docker-composer up -d
 
-# Web
+# Document UI with docker
 
-http://localhost:8000
+http://localhost:8001/swagger/
 
-# Document UI
+# Local
 
 http://127.0.0.1:8000/swagger/
 http://127.0.0.1:8000/redoc/
 
 # Test
+
+docker exec -it demo_db_1 bash
 
 pytest
 
