@@ -16,7 +16,6 @@ class LenderView(APIView):
         :return:
     """
     polygon_view_get_desc = 'List lender with filter'
-
     @swagger_auto_schema(
         operation_description=polygon_view_get_desc,
         manual_parameters=[
@@ -49,9 +48,8 @@ class LenderView(APIView):
         response = lender_repository.fetch(request)
         return response
 
-    polygon_view_get_desc = 'Create a lender'
-
-    @swagger_auto_schema(operation_description=polygon_view_get_desc,
+    polygon_view_post_desc = 'Create a lender'
+    @swagger_auto_schema(operation_description=polygon_view_post_desc,
                          request_body=LenderSerializer)
     def post(self, request, *args, **kwargs):
         """
@@ -64,17 +62,3 @@ class LenderView(APIView):
             return Response(status=HTTP_406_NOT_ACCEPTABLE)
         return Response(res, status=HTTP_201_CREATED)
 
-    """
-        create lender csv dumpfile
-    """
-    polygon_view_get_desc = 'Dump a lender CSV'
-
-    @swagger_auto_schema(operation_description=polygon_view_get_desc)
-    @action(methods=['post'], detail=False)
-    def dumps(self, request, *args, **kwargs):
-        """
-           Export lender to csv
-        """
-        lender_repository: LenderService = LenderService()
-        file_path = lender_repository.dumps()
-        return Response({"file_path": file_path}, status=HTTP_201_CREATED)

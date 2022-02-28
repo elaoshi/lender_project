@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure--vte!niqr4g&^wfs04fd#jp&m(%v-x-3ks!es=0h5dti9a0vxv
 DEBUG = TEMPLATE_DEBUG = True
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -88,7 +88,7 @@ DATABASES = {
         'NAME': 'django_app',
         'USER': 'example',
         'PASSWORD': 'example',
-        'HOST': '127.0.0.1',   # Or an IP Address that your DB is hosted on
+        'HOST': 'db',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
         # 'OPTIONS': {
         #     'read_default_file': 'my.cnf',

@@ -1,5 +1,18 @@
 version: "3"
 services:
+  db:
+    image: mariadb
+    volumes:
+#      - ./mysql:/var/lib/mysql
+      - ./init_docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    restart: always
+    environment:
+      MYSQL_USER: example
+      MYSQL_PASSWORD: example
+      MYSQL_ROOT_PASSWORD: example
+
   app:
     restart: always
     build: .
@@ -10,18 +23,6 @@ services:
       - "8001:8000"
     depends_on:
       - db
-  db:
-    image: mariadb
-    volumes:
-      - ./init_docker/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - "./mysql:/var/lib/mysql"
-    ports:
-      - "3306:3306"
-    restart: always
-    environment:
-      MYSQL_USER: example
-      MYSQL_PASSWORD: example
-      MYSQL_ROOT_PASSWORD: example
 
 #
 #  adminer:
