@@ -37,12 +37,6 @@ class LenderView(APIView):
                 in_=openapi.IN_QUERY,
                 description='Filter lender, 1 for actived , 0 for inactived',
                 type=openapi.TYPE_INTEGER
-            ),
-            openapi.Parameter(
-                name='id',
-                in_=openapi.IN_PATH,
-                description='lender id',
-                type=openapi.TYPE_INTEGER
             )
         ]
     )
