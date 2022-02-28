@@ -85,8 +85,6 @@ def test_list_all_lender(create_lender,a,b,expected):
     assert lender.id == qs.id
     assert  (lender.name == qs.name and expected)
 
-# ----
-
 
 @pytest.mark.django_db
 def test_lender_serveice_fetch(create_lender):
@@ -151,8 +149,7 @@ def test_lender_dump(create_lender):
 
     lenderRepository = LenderRepository()
     items = lenderRepository.dump()
-    print(items)
-    # assert len(items) == 2
+    assert len(items) > 0
 
 
 @pytest.mark.django_db
