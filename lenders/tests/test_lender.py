@@ -150,6 +150,8 @@ def test_lender_dump(create_lender):
     lenderRepository = LenderRepository()
     items = lenderRepository.dump()
     assert len(items) > 0
+    filename = lenderRepository.dump(output='csv')
+    assert len(filename) > 0
 
 
 @pytest.mark.django_db
