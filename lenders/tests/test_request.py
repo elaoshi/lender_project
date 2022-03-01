@@ -45,7 +45,7 @@ class AccountTests(APITestCase):
         }
         response = self.client.post(url, data, format='json')
 
-        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
     @patch("pandas.read_csv")

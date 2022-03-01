@@ -1,5 +1,6 @@
 from django.db import DataError
 from rest_framework.reverse import reverse
+from rest_framework.status import HTTP_201_CREATED
 
 from lenders.dao.LenderRepository import LenderRepository
 from lenders.models import Lender
@@ -8,7 +9,7 @@ from faker import Factory
 
 from django.test.client import RequestFactory
 from lenders.services.lenderSerivce import LenderService
-from lenders.views import LenderView, LenderDetailView, HTTP_204_NO_CONTENT, HTTP_200_OK, HTTP_201_CREATED
+from lenders.views import LenderView, LenderDetailView, HTTP_204_NO_CONTENT, HTTP_200_OK
 from lenders.views.lenderDumps import LenderDumpView
 
 

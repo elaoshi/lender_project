@@ -1,15 +1,32 @@
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.status import HTTP_201_CREATED, HTTP_406_NOT_ACCEPTABLE
-from rest_framework.views import APIView
+from rest_framework import mixins, generics
+# from rest_framework.decorators import action
+# from rest_framework.response import Response
+# from rest_framework.status import HTTP_201_CREATED, HTTP_406_NOT_ACCEPTABLE
+# from rest_framework.views import APIView
 
+from ..dao.LenderRepository import LenderRepository
 from ..serializers import LenderSerializer
-from ..services.lenderSerivce import LenderService
+from ..services.lenderSerivce import MyPageNumberPagination
 
 
-class LenderView(APIView):
+class LenderView(mixins.ListModelMixin,
+                  mixins.CreateModelMixin,
+                  generics.GenericAPIView):
+    lender_repository = LenderRepository()
+    queryset = lender_repository.list_all()
+    serializer_class = LenderSerializer
+    pagination_class = MyPageNumberPagination
+
+    def get_queryset(self):
+        lender_repository = LenderRepository()
+        qs = lender_repository.list_all()
+        active = self.request.query_params.get('active')
+        if active is not None:
+            return qs.filter(active=active)
+        return qs
+
     """
         Get resultes.
         :rtype: BaseModel | None
@@ -39,26 +56,12 @@ class LenderView(APIView):
             )
         ]
     )
-    def get(self, request):
-        """
-           Fetch lenders
-        """
-        lender_repository: LenderService = LenderService()
-
-        response = lender_repository.fetch(request)
-        return response
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
 
     polygon_view_post_desc = 'Create a lender'
     @swagger_auto_schema(operation_description=polygon_view_post_desc,
                          request_body=LenderSerializer)
     def post(self, request, *args, **kwargs):
-        """
-           Create lender
-        """
-        lender_repository: LenderService = LenderService()
-
-        res = lender_repository.save(request.data)
-        if res is False:
-            return Response(status=HTTP_406_NOT_ACCEPTABLE)
-        return Response(res, status=HTTP_201_CREATED)
+        return self.create(request, *args, **kwargs)
 
