@@ -1,3 +1,4 @@
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import mixins, generics
@@ -25,6 +26,9 @@ class LenderView(mixins.ListModelMixin,
         if active is not None:
             return queryset.filter(active=active)
         return queryset
+
+    filter_backends = [DjangoFilterBackend, ]
+    filterset_fields = ['active', 'name', 'code']
 
     """
         Get resultes.

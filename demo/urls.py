@@ -42,7 +42,7 @@ schema_view = get_schema_view(
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('lender',LenderView.as_view(), name='lender-list'),
-    path('lender/<int:id>', LenderDetailView.as_view(), name='lender-detail'),
+    path('lender/<int:pk>', LenderDetailView.as_view(), name='lender-detail'),
     path('lender/dump',LenderDumpView.as_view(), name='lender-dump'),
     path('lender/upload',LenderUploadView.as_view(), name='lender-bulk-upload'),
 

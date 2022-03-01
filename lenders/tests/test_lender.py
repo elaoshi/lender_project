@@ -1,6 +1,6 @@
 from django.db import DataError
 from rest_framework.reverse import reverse
-from rest_framework.status import HTTP_201_CREATED
+from rest_framework.status import HTTP_201_CREATED, HTTP_404_NOT_FOUND
 
 from lenders.dao.LenderRepository import LenderRepository
 from lenders.models import Lender
@@ -223,7 +223,7 @@ def test_lender_detail_get(create_lender):
     name = 'test'
     lender = create_lender(name=name)
     rf = RequestFactory()
-    kwargs = {"id": lender.id}
+    kwargs = {"pk": lender.id}
     get_request = rf.get(reverse('lender-detail', kwargs=kwargs))
     response = LenderDetailView.as_view()(get_request, **kwargs)
 
@@ -250,11 +250,11 @@ def test_lender_detail_fetch_special(create_lender):
     lender = create_lender(name=name)
     _id = lender.id
     rf = RequestFactory()
-    kwargs = {"id": 999}
+    kwargs = {"pk": 999}
     get_request = rf.get(reverse('lender-detail', kwargs=kwargs))
     response = LenderDetailView.as_view()(get_request, **kwargs)
 
-    assert response.status_code == HTTP_204_NO_CONTENT
+    assert response.status_code == HTTP_404_NOT_FOUND
 
 
 @pytest.mark.django_db
@@ -263,9 +263,12 @@ def test_lender_detail_update_special(create_lender):
     lender = create_lender(name=name)
     _id = lender.id
     rf = RequestFactory()
-    kwargs = {"id": _id}
+    kwargs = {"pk": _id}
     data = {
-        "name":"ttt"
+        "name":"ttt",
+        "code":"bbb",
+        "upfront_commistion_rate":0.1,
+        "trait_commistion_rate":0.2
     }
     _request = rf.put(reverse('lender-detail', kwargs=kwargs), data=data, content_type='application/json')
     response = LenderDetailView.as_view()(_request, **kwargs)
@@ -279,14 +282,14 @@ def test_lender_detail_update_special_not_exist(create_lender):
     lender = create_lender(name=name)
     _id = lender.id
     rf = RequestFactory()
-    kwargs = {"id": 9999}
+    kwargs = {"pk": 9999}
     data = {
         "name":"ttt"
     }
     _request = rf.put(reverse('lender-detail', kwargs=kwargs), data=data, content_type='application/json')
     response = LenderDetailView.as_view()(_request, **kwargs)
 
-    assert response.status_code == HTTP_204_NO_CONTENT
+    assert response.status_code == HTTP_404_NOT_FOUND
 
 
 
@@ -296,12 +299,12 @@ def test_lender_detail_delete_special(create_lender):
     lender = create_lender(name=name)
     _id = lender.id
     rf = RequestFactory()
-    kwargs = {"id": _id}
+    kwargs = {"pk": _id}
 
     _request = rf.delete(reverse('lender-detail', kwargs=kwargs), content_type='application/json')
     response = LenderDetailView.as_view()(_request, **kwargs)
 
-    assert response.status_code == HTTP_200_OK
+    assert response.status_code == HTTP_204_NO_CONTENT
 
 
 @pytest.mark.django_db
@@ -310,12 +313,12 @@ def test_lender_detail_delete_special_not_exist(create_lender):
     lender = create_lender(name=name)
     _id = lender.id
     rf = RequestFactory()
-    kwargs = {"id": 999}
+    kwargs = {"pk": 999}
 
     _request = rf.delete(reverse('lender-detail', kwargs=kwargs), content_type='application/json')
     response = LenderDetailView.as_view()(_request, **kwargs)
 
-    assert response.status_code == HTTP_204_NO_CONTENT
+    assert response.status_code == HTTP_404_NOT_FOUND
 
 
 @pytest.mark.django_db
