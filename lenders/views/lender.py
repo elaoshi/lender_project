@@ -20,12 +20,11 @@ class LenderView(mixins.ListModelMixin,
     pagination_class = MyPageNumberPagination
 
     def get_queryset(self):
-        lender_repository = LenderRepository()
-        qs = lender_repository.list_all()
+        queryset = self.queryset
         active = self.request.query_params.get('active')
         if active is not None:
-            return qs.filter(active=active)
-        return qs
+            return queryset.filter(active=active)
+        return queryset
 
     """
         Get resultes.
